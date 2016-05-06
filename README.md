@@ -2,9 +2,11 @@
 The Cerebral signals running on Redux
 
 ### What are these signals conceptually?
-With Redux you typically think of actions. Actions are like commands, they tell your app what to do. For example when your application mounts you would trigger an action saying: "getInitialData". With signals you think a bit differently. A good analogy is how your body works. If you burn your finger the finger does not command your arm to pull away. Your finger just sends a signal about being burned to your brain and the brain changes your "state of mind", which the arm will react to. With this analogy you would name your signal "appMounted", because that is what happened. Your signal then defines what is actually going to happen.
+With Redux you typically think of actions. Actions are like commands, they tell your app what to do. For example when your application mounts you would trigger an action saying: "getInitialData", but with signals you do not let your UI (or other events) command your application logic.
 
-The way a signal defines what is going to happen is using an `action-tree`. Think of this as a behaviour tree, like for games. It makes you able to declaretively describe what is going to happen in your app when a signal triggers.
+A good analogy for signals is how your body works. If you burn your finger the finger does not command your arm to pull away. Your finger just sends a signal to your brain about it being burned and the brain changes your "state of mind", which the arm will react to. With this analogy you would not name your signal "getInitialData", but "appMounted", because that is what happened. Your signal then defines what is actually going to happen... which in this case is getting the initial data.
+
+A signal is actually an [action-tree](). Think of this as a behaviour tree, like for games. It makes you able to declaretively describe what is going to happen in your app when a signal triggers.
 
 ### How do I create a signal?
 ```js
@@ -16,14 +18,15 @@ export default signal([
 ]);
 ```
 
-You use the `signal` factory to define your signal. A signal is an array which executes one action at a time. In the example above we use the `dispatch` factory to create an action that dispatches the type `"APP_LOADING"`. That means you do not create traditional redux actions, you create signals composed with actions.
+You use the `signal` factory to define your signal. A signal is an array which executes one action at a time. In the example above we use the `dispatch` factory to create an action that dispatches the type `"APP_LOADING"`. That means you do not create traditional redux actions, you create signals composing actions... and even other signals.
+
+To use a signal you `connect` it just like you connect normal actions:
 
 ```js
 import appMounted from 'signals/appMounted';
 ...
 connect(state => state.app, {appMounted})(App);
 ```
-You connect signals the same way as actions though.
 
 ### Passing a payload to a signal
 When you trigger a signal you can pass it a payload:
@@ -43,7 +46,7 @@ class App extends React.Component {
 This payload has to be an object and it will be passed into your signal. This payload is available to the actions in the signal.
 
 ### How do I create actions?
-Let us first look at the signature:
+Let us first look at the signature. An action is just a function that receives a `context` holding some properties:
 
 ```js
 function myAction({input, output, getState, dispatch}) {
@@ -131,8 +134,6 @@ function myAction({input, output, getState, dispatch}) {
 myAction.outputs = ['success', 'error'];
 ```
 
-At this point you might be thinking: "Why define all these things?". The reason is that you are isolating some piece of logic inside a lego block, a lego block you can very easily reuse in other signals. The other reason is that these signals are not really about the actions, it is about the signals themselves. Any person, not even a programmer, will be able to quickly get a grasp on what the heck your application is doing when something happens in the UI or other events. Instead of reading an `action creator` which has no specific structure to it, you can read a very specific abstracted with your vocabulary of choice that fits in your head.
-
 ### Going async
 So signals are pretty powerful when it comes to asynchronicity. To define an asynchronous action you simply:
 
@@ -183,3 +184,21 @@ export default signal([
 ```
 
 This structure of parallel and nested actions can go as deep as you want.
+
+### Grabbing state inside an action
+Any action can grab the existing state of the app:
+
+```js
+function myAction({input, output, getState}) {
+  getState() // {reducerA: {}, reducerB: {}}
+}
+```
+
+### Dispatching to the reducers
+Only synchronous actions can dispatch to the reducers. There is actually no technical reason why this is, it is a forced convention. An asynchronous action will most surely have some work to do not related to dispatching. By not allowing dispatching we ensure that the action does one thing and offputs any state changes to the next action. Not allowing async actions to make changes to the state also makes it easier to implement debugging tools.
+
+```js
+function myAction({input, output, getState, dispatch}) {
+  dispatch({type: SOME_ACTION, foo: 'bar'})
+}
+```
