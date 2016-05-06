@@ -202,3 +202,59 @@ function myAction({input, output, getState, dispatch}) {
   dispatch({type: SOME_ACTION, foo: 'bar'})
 }
 ```
+
+### Factories
+I have mentioned factories a couple of times. A factory is general term, but in this context it is "a function that returns an action". Lets look at how the `dispatch` factory works:
+
+```js
+function dispatch(actionType) {
+  function action({input, dispatch}) {
+    dispatch({type: actionType, payload: input});
+  }
+  return action;
+}
+```
+That is it! A function returning an action.
+
+Factories can be used for many different things. For example creating an HTTP service for your app:
+
+```js
+export default signal([
+  get('/api/items'), {
+    success: [],
+    error: []
+  }
+])
+```
+Which would look something like:
+
+```js
+import axios from 'axios';
+
+function get(url) {
+  function action({input, output}) {
+    axios.get(url)
+      .then(response => output.success({result: response.result}))
+      .catch(error => output.error({error: error.message}));
+  }
+  action.async = true;
+  action.outputs = ['success', 'error'];
+  
+  return action;
+}
+```
+
+### Composing chains
+There is a new awesome feature in ES2015 called the [spread operator](). It is a great tool for composing signals with each other. One example could be that you want to grab some todos when you fire up the app, but you also want to grab them when the user clicks an "update" button or whatever.
+
+```js
+export default signal([
+  getUser, {
+    success: [
+      dispatch(SET_USER),
+      ...getTodos // [getTodos, {success: [dispatch(SET_TODOS)], error: []}]
+    ],
+    error: []
+  }
+]);
+```
