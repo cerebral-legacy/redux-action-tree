@@ -131,56 +131,55 @@ function myAction({input, output, getState, dispatch}) {
 myAction.outputs = ['success', 'error'];
 ```
 
-At this point you might be thinking: "Why define all these things?". The reason is that you are not writing this code for your own sake, you are writing it for "the next developer". With signals and your actions you create a vocabulary for your application which anyone reading it can understand. You do not even have to be a programmer. It makes it very easy to fit in complex logic into your head, which is needed to handle the complexity. Lets look at an example:
+At this point you might be thinking: "Why define all these things?". The reason is that you are isolating some piece of logic inside a lego block, a lego block you can very easily reuse in other signals. The other reason is that these signals are not really about the actions, it is about the signals themselves. Any person, not even a programmer, will be able to quickly get a grasp on what the heck your application is doing when something happens in the UI or other events. Instead of reading an `action creator` which has no specific structure to it, you can read a very specific abstracted with your vocabulary of choice that fits in your head.
+
+### Going async
+So signals are pretty powerful when it comes to asynchronicity. To define an asynchronous action you simply:
+
+```js
+function myAction({input, output, getState}) {
+  setTimeout(() => output(), 1000); // An async action must output something
+}
+myAciton.async = true;
+```
+
+When this action is put into the signal:
 
 ```js
 export default signal([
-  withUserRole, {
-    admin: [
-      [
-        getUsers, {
-          success: [
-            dispatch(USERS_LOADED)
-          ],
-          error: [
-            dispatch(USERS_LOADED_ERROR),
-            showSnackbarError('Could not load users')
-          ]
-        },
-        getPosts, {
-          success: [
-            dispatch(POSTS_LOADED)
-          ],
-          error: [
-            dispatch(POSTS_LOADED_ERROR),
-            showSnackbarError('Could not load posts')  
-          ]
-        }
-      ],
-      showSnackbar('Data fetching done!')
-    ]
-    superuser: [
-      getPosts, {
-        success: [
-          dispatch(POSTS_LOADED),
-          showSnackbar('Posts loaded!')
-        ],
-        error: [
-          dispatch(POSTS_LOADED_ERROR),
-          showSnackbarError('Could not load posts')
-        ]
-      }
-    ],
-    user: [
-      showSnackbarError('You have to login to access this thingy')
-    ],
-    other: [
-      showSnackbarError('Sorry, no access')
-    ]
-  }
+  someAsyncAction, // Holds for one second
+  someSyncAction
 ]);
 ```
-The point of this structure is for "the next developer", which is often yourself, to understand this very complex logic for handling different scenarios without looking at any implementation code. You might say that you could easily implement this in an action creator and make it readable, and yes you could, but there is not set structure of how you would do that. With signals there is a set way of doing it encouraging isolating logic into reusable actions.... which we will look more into :-)
 
+it will wait for one second before the next action runs. It is also possible to group async actions using an array, making them run in parallel:
 
+```js
+export default signal([
+  [
+    someAsyncAction,
+    someAsyncAction2
+  ],
+  someSyncAction // Runs after both async actions are done
+]);
+```
 
+You can even add paths to each of these async actions:
+
+```js
+export default signal([
+  [
+    someAsyncAction, {
+      success: [],
+      error: []
+    },
+    someAsyncAction2, {
+      success: [],
+      error: []
+    }
+  ],
+  someSyncAction // Runs after both async actions and their paths are done
+]);
+```
+
+This structure of parallel and nested actions can go as deep as you want.
