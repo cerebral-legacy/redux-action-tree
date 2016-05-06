@@ -1,4 +1,4 @@
-# redux-action-tree
+# redux-signals
 The Cerebral signals running on Redux
 
 ### What are these signals conceptually?
