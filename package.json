@@ -1,0 +1,26 @@
+{
+  "name": "redux-signals",
+  "version": "0.1.0",
+  "description": "Signals for Redux",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cerebral/redux-signals.git"
+  },
+  "keywords": [
+    "redux",
+    "signals"
+  ],
+  "author": "Christian Alfoni",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cerebral/redux-signals/issues"
+  },
+  "homepage": "https://github.com/cerebral/redux-signals#readme",
+  "dependencies": {
+    "action-tree": "0.0.1"
+  }
+}
