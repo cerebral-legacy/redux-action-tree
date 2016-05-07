@@ -2,11 +2,11 @@
 The Cerebral signals running on Redux
 
 ### What are these signals conceptually?
-With Redux you typically think of actions. Actions are like commands, they tell your app what to do. For example when your application mounts you would trigger an action saying: "getInitialData", but with signals you do not let your UI (or other events) command your application logic.
+With [Redux](https://github.com/reactjs/redux) you typically think of actions. Actions are like commands, they tell your app what to do. For example when your application mounts you would trigger an action saying: "getInitialData". With signals you do not let your UI (or other events) command your application logic, they tell your application what happened.
 
 A good analogy for signals is how your body works. If you burn your finger the finger does not command your arm to pull away. Your finger just sends a signal to your brain about it being burned and the brain changes your "state of mind", which the arm will react to. With this analogy you would not name your signal "getInitialData", but "appMounted", because that is what happened. Your signal then defines what is actually going to happen... which in this case is getting the initial data.
 
-A signal is actually an [action-tree](). Think of this as a behaviour tree, like for games. It makes you able to declaretively describe what is going to happen in your app when a signal triggers.
+A signal uses an [action-tree](https://github.com/cerebral/action-tree) tree to define its behaviour. Think of this as a behaviour tree, like in games. It makes you able to declaretively describe what is going to happen in your app when a signal triggers.
 
 ### How do I create a signal?
 ```js
@@ -20,7 +20,7 @@ export default signal([
 
 You use the `signal` factory to define your signal. A signal is an array which executes one action at a time. In the example above we use the `dispatch` factory to create an action that dispatches the type `"APP_LOADING"`. That means you do not create traditional redux actions, you create signals composing actions... and even other signals.
 
-To use a signal you `connect` it just like you connect normal actions:
+To use a signal you `connect` it just like you connect traditional actions:
 
 ```js
 import appMounted from 'signals/appMounted';
@@ -69,7 +69,7 @@ function myAction({input, output, getState, dispatch}) {
 }
 ```
 #### Adding to the payload
-Typically you want more than one thing to happen when a signal triggers, which means that you can:
+Typically you want more than one thing to happen when a signal triggers. You can add multiple actions to the action tree:
 
 ```js
 import {signal, dispatch} from 'redux-signals';
@@ -131,7 +131,7 @@ function myAction({input, output, getState, dispatch}) {
     output.error();
   }
 }
-myAction.outputs = ['success', 'error'];
+myAction.outputs = ['success', 'error']; // Defines paths the action can take
 ```
 
 ### Going async
@@ -141,7 +141,7 @@ So signals are pretty powerful when it comes to asynchronicity. To define an asy
 function myAction({input, output, getState}) {
   setTimeout(() => output(), 1000); // An async action must output something
 }
-myAciton.async = true;
+myAciton.async = true; // An async property
 ```
 
 When this action is put into the signal:
@@ -195,16 +195,20 @@ function myAction({input, output, getState}) {
 ```
 
 ### Dispatching to the reducers
-Only synchronous actions can dispatch to the reducers. There is actually no technical reason why this is, it is a forced convention. An asynchronous action will most surely have some work to do not related to dispatching. By not allowing dispatching we ensure that the action does one thing and offputs any state changes to the next action. Not allowing async actions to make changes to the state also makes it easier to implement debugging tools.
+Only synchronous actions can dispatch to the reducers. Technically it does not have to be like this, but it is a forced convention for two reasons:
 
+1. An asynchronous action will most surely have some work to do not related to dispatching. By not allowing dispatching we ensure that the action does its ONE thing and offputs any state changes to the next action. For example the action `getUser` should only get the user, not also set it
+2. Not allowing async actions to make changes to the state also makes it easier to implement debugging tools
+
+To dispatch you do it the same way as you are used to:
 ```js
 function myAction({input, output, getState, dispatch}) {
-  dispatch({type: SOME_ACTION, foo: 'bar'})
+  dispatch({type: SOME_TYPE, foo: 'bar'})
 }
 ```
 
 ### Factories
-I have mentioned factories a couple of times. A factory is general term, but in this context it is "a function that returns an action". Lets look at how the `dispatch` factory works:
+I have mentioned factories a couple of times. A factory is general term, but in this context it is "a function that returns an action". Lets look at how the included `dispatch` factory works:
 
 ```js
 function dispatch(actionType) {
@@ -245,16 +249,28 @@ function get(url) {
 ```
 
 ### Composing chains
-There is a new awesome feature in ES2015 called the [spread operator](). It is a great tool for composing signals with each other. One example could be that you want to grab some todos when you fire up the app, but you also want to grab them when the user clicks an "update" button or whatever.
+There is a new awesome feature in ES2015 called the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_operator). It is a great tool for composing signals with each other. One example could be that you want to grab some todos when you fire up the app, but you also want to grab them when the user clicks an "update" button or whatever.
 
 ```js
 export default signal([
+  dispatch(APP_LOADING),
   getUser, {
     success: [
       dispatch(SET_USER),
       ...getTodos // [getTodos, {success: [dispatch(SET_TODOS)], error: []}]
     ],
     error: []
-  }
+  },
+  dispatch(APP_LOADED)
 ]);
 ```
+```js
+export default signal([
+  dispatch(TODOS_LOADING),
+  ...getTodos
+  dispatch(TODOS_LOADED)
+]);
+```
+
+### Summary
+Signals is at the core of the [Cerebral](http://www.cerebraljs.com) framework and has proven itself a powerful concept to build complex applications as it helps you keep a mental image of the complex flows in your app.
