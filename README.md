@@ -142,6 +142,11 @@ function myAction({input, output, getState}) {
   setTimeout(() => output(), 1000); // An async action must output something
 }
 myAciton.async = true; // An async property
+
+// When native to browsers at a later point you will be able to
+async function myAction({input, output, getState}) {
+  setTimeout(() => output(), 1000); // An async action must output something
+}
 ```
 
 When this action is put into the signal:
