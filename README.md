@@ -46,7 +46,7 @@ class App extends React.Component {
 This payload has to be an object and it will be passed into your signal. This payload is available to the actions in the signal.
 
 ### How do I create actions?
-Let us first look at the signature. An action is just a function that receives a `context` holding some properties:
+Let us first look at the signature. An action is just a function that receives a `context` holding some properties. Think of it as the `thunk` middleware, but as part of a signal:
 
 ```js
 function myAction({input, output, getState, dispatch}) {
