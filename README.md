@@ -45,22 +45,6 @@ class App extends React.Component {
 
 This payload has to be an object and it will be passed into your signal. This payload is available to the actions in the signal.
 
-**BEWARE**. Signals runs asynchronously, meaning that controlled inputs in **React** does not work. We have been discussing this a lot and have concluded that controlled inputs is not as important as a consistent API, reduced complexity and optimizations in the library. It is also a matter of other VDOM implementations not having controlled inputs. So what does that mean?
-
-```js
-// Do this
-<input
-  defaultValue={this.props.value}
-  onInput={e => this.props.valueChanged({value: e.target.value})} />
-
-// Instead of this
-<input
-  value={this.props.value}
-  onChange={e => this.props.valueChanged({value: e.target.value})} />
-```
-
-The consequence is that you manually have to control the input, in the rare occasion where you want to only allow numbers for example.
-
 ### How do I create actions?
 Let us first look at the signature. An action is just a function that receives a `context` holding some properties. Think of the action as the `thunk` middleware function, but it is part of a flow:
 
