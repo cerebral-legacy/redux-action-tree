@@ -1,5 +1,5 @@
 {
-  "name": "redux-signals",
+  "name": "redux-action-tree",
   "version": "0.1.0",
   "description": "Signals for Redux",
   "main": "index.js",

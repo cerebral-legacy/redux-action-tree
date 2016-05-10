@@ -1,7 +1,7 @@
-# redux-signals
-The Cerebral signals running on Redux (BETA)
+# redux-action-tree
+Inspired by the [Cerebral](http://www.cerebraljs.com) signals, a behaviour tree like implementation of actions for complex state changes.
 
-### What are these signals conceptually?
+### What are these Cerebral signals conceptually?
 With [Redux](https://github.com/reactjs/redux) you typically think of actions. Actions are like commands, they tell your app what to do. For example when your application mounts you would trigger an action saying: "getInitialData". With signals you do not let your UI (or other events) command your application logic, they only tell your application what happened. This also aligns with the concept of keeping your UI as dumb as possible.
 
 A good analogy for signals is how your body works. If you burn your finger the finger does not command your arm to pull away. Your finger just sends a signal to your brain about it being burned and the brain changes your "state of mind", which the arm will react to. With this analogy you would not name your signal "getInitialData", but "appMounted", because that is what happened. Your signal then defines what is actually going to happen... which in this case is getting the initial data.
@@ -10,7 +10,7 @@ A signal uses an [action-tree](https://github.com/cerebral/action-tree) tree to 
 
 ### How do I create a signal?
 ```js
-import {signal, dispatch} from 'redux-signals';
+import {signal, dispatch} from 'redux-action-tree';
 import {APP_LOADING} from 'constants';
 
 export default signal([
@@ -88,7 +88,7 @@ function myAction({input, output, getState, dispatch}) {
 Typically you want more than one thing to happen when a signal triggers. You can add multiple actions to the action tree:
 
 ```js
-import {signal, dispatch} from 'redux-signals';
+import {signal, dispatch} from 'redux-action-tree';
 import myAction from 'actions/myAction';
 import myOtherAction from 'actions/myOtherAction';
 
