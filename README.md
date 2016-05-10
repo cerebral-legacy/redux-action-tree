@@ -1,4 +1,4 @@
-# redux-action-tree
+# redux-action-tree (BETA)
 Inspired by the [Cerebral](http://www.cerebraljs.com) signals, a behaviour tree like implementation of actions for complex state changes.
 
 ### What are these Cerebral signals conceptually?
