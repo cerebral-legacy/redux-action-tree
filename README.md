@@ -1,5 +1,5 @@
 # redux-signals
-The Cerebral signals running on Redux
+The Cerebral signals running on Redux (BETA)
 
 ### What are these signals conceptually?
 With [Redux](https://github.com/reactjs/redux) you typically think of actions. Actions are like commands, they tell your app what to do. For example when your application mounts you would trigger an action saying: "getInitialData". With signals you do not let your UI (or other events) command your application logic, they only tell your application what happened. This also aligns with the concept of keeping your UI as dumb as possible.
@@ -44,6 +44,22 @@ class App extends React.Component {
 ```
 
 This payload has to be an object and it will be passed into your signal. This payload is available to the actions in the signal.
+
+**BEWARE**. Signals runs asynchronously, meaning that controlled inputs in **React** does not work. We have been discussing this a lot and have concluded that controlled inputs is not as important as a consistent API, reduced complexity and optimizations in the library. It is also a matter of other VDOM implementations not having controlled inputs. So what does that mean?
+
+```js
+// Do this
+<input
+  defaultValue={this.props.value}
+  onInput={e => this.props.valueChanged({value: e.target.value})} />
+
+// Instead of this
+<input
+  value={this.props.value}
+  onChange={e => this.props.valueChanged({value: e.target.value})} />
+```
+
+The consequence is that you manually have to control the input, in the rare occasion where you want to only allow numbers for example.
 
 ### How do I create actions?
 Let us first look at the signature. An action is just a function that receives a `context` holding some properties. Think of the action as the `thunk` middleware function, but it is part of a flow:
@@ -248,7 +264,7 @@ function get(url) {
   }
   action.async = true;
   action.outputs = ['success', 'error'];
-  
+
   return action;
 }
 ```

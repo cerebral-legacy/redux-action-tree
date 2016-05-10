@@ -13,14 +13,18 @@ function createSignal(chain) {
 
       function outputFn(path, outputPayload) {
         result = {
-          path: path,
-          payload: outputPayload
+          path: typeof path === 'string' ? path : null,
+          payload: typeof path === 'string' ? outputPayload : path
         }
 
         if (action.isAsync) {
           resolve(result)
         }
       }
+
+      (actionFunc.outputs || ['success', 'error']).forEach(function(output) {
+        outputFn[output] = outputFn.bind(null, output);
+      });
 
       actionFunc({
         input: payload,
@@ -35,7 +39,7 @@ function createSignal(chain) {
 
   const executer = function (payload) {
     return function (dispatch, getState) {
-      executeTree(tree.tree, runAction.bind(null, dispatch, getState), payload)
+      return executeTree(tree.tree, runAction.bind(null, dispatch, getState), payload)
     }
   }
 
