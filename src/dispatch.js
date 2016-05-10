@@ -1,6 +1,6 @@
 function dispatch(actionType) {
   function action(context) {
-    context.dispatch(actionType, {payload: context.input});
+    context.dispatch({type: actionType, payload: context.input});
   }
   return action;
 }
