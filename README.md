@@ -101,10 +101,10 @@ Much like a behaviour tree you can output to paths. Lets look at an example:
 export default signal([
   getUser, {
     success: [
-      dispatch(SET_USER)
+      dispatch(USER_LOADED)
     ],
     error: [
-      dispatch(SET_ERROR)
+      dispatch(USER_LOADED_ERROR)
     ]
   }
 ]);
@@ -261,8 +261,8 @@ export default signal([
   dispatch(APP_LOADING),
   getUser, {
     success: [
-      dispatch(SET_USER),
-      ...getTodos // [getTodos, {success: [dispatch(SET_TODOS)], error: []}]
+      dispatch(USER_LOADED),
+      ...getTodos // [getTodos, {success: [dispatch(TODOS_LOADED)], error: []}]
     ],
     error: []
   },
