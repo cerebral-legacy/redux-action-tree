@@ -6,7 +6,7 @@ With [Redux](https://github.com/reactjs/redux) you typically think of actions an
 
 A good analogy for signals is how your body works. If you burn your finger the finger does not command your arm to pull away. Your finger just sends a signal to your brain about it being burned and the brain changes your "state of mind", which the arm will react to. With this analogy you would not name your signal "getInitialData", but "appMounted", because that is what happened. Your signal then defines what is actually going to happen... which in this case is getting the initial data.
 
-A signal uses an [action-tree](https://github.com/cerebral/action-tree) tree to define its behaviour. Think of this as a behaviour tree, like in games. It makes you able to declaretively describe what is going to happen in your app when a signal triggers.
+A signal uses an [action-tree](https://github.com/cerebral/action-tree) tree to define its behaviour. Think of this as a behaviour tree, like in games. It makes you able to declaratively describe what is going to happen in your app when a signal triggers.
 
 ### How do I create a signal?
 ```js
