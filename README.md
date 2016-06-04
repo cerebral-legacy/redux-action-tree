@@ -24,8 +24,9 @@ To use a signal you `connect` it just like you connect traditional actions:
 
 ```js
 import appMounted from 'signals/appMounted';
+import buttonClicked from 'signals/buttonClicked';
 ...
-connect(state => state.app, {appMounted})(App);
+connect(state => state.app, {appMounted, buttonClicked})(App);
 ```
 
 ### Passing a payload to a signal
