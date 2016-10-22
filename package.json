@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cerebral/redux-signals.git"
+    "url": "git+https://github.com/cerebral/redux-action-tree.git"
   },
   "keywords": [
     "redux",
@@ -17,9 +17,9 @@
   "author": "Christian Alfoni",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cerebral/redux-signals/issues"
+    "url": "https://github.com/cerebral/redux-action-tree/issues"
   },
-  "homepage": "https://github.com/cerebral/redux-signals#readme",
+  "homepage": "https://github.com/cerebral/redux-action-tree#readme",
   "dependencies": {
     "action-tree": "0.0.1"
   }
