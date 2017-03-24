@@ -149,7 +149,7 @@ So signals are pretty powerful when it comes to asynchronicity. To define an asy
 function myAction({input, output, getState}) {
   setTimeout(() => output(), 1000); // An async action must output something
 }
-myAciton.async = true; // An async property
+myAction.async = true; // An async property
 
 // When native to browsers at a later point you will be able to
 async function myAction({input, output, getState}) {
